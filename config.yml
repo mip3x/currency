@@ -1,0 +1,6 @@
+port: "8000"
+service: "currency"
+author: "mip3x"
+version: "unknown"
+url: "https://www.cbr.ru/scripts/XML_daily.asp"
+useragent: "Currency-App[FAKE]"
