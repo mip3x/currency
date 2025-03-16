@@ -15,8 +15,6 @@ This repository provides a simple currency information service with several endp
    - [Health Check (`/health`)](#health-check-health)
    - [Service Info (`/info`)](#service-info-info)
    - [Currency Info (`/info/currency`)](#currency-info-infocurrency)
-7. [Examples](#examples)
-8. [License](#license)
 
 ---
 
