@@ -13,6 +13,7 @@ func NewRouter(cfg *config.Config, currencyService *service.CurrencyService) htt
 
 	mux.HandleFunc("/info", h.InfoHandler)
 	mux.HandleFunc("/info/currency", h.CurrencyHandler)
+	mux.HandleFunc("/health", h.HealthCheckHandler)
 
 	return mux
 }
