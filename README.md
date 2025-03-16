@@ -97,7 +97,7 @@ author: AUTHOR
 ```bash
 curl http://localhost:8080/health
 ```
-# OK
+`OK`
 
 ### Service info (`/info`)
 
