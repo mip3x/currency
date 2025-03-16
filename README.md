@@ -1,2 +1,2 @@
 # currency
-Currency REST API
+Currency REST API in Golang

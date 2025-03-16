@@ -64,3 +64,9 @@ func (h *Handler) CurrencyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write(jsonResp)
 }
+
+func (h *Handler) HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("OK"))
+}

@@ -25,7 +25,7 @@ func main() {
 	router := httpdelivery.NewRouter(cfg, currencyService)
 
 	port := cfg.Port
-	if envPort, ok := os.LookupEnv("PORT"); ok {
+	if envPort, ok := os.LookupEnv("APP_PORT"); ok {
 		port = envPort
 	}
 

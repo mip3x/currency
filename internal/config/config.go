@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	defaultPort       = "8000"
+	defaultPort       = "8080"
 	defaultService    = "currency"
 	defaultAuthor     = "unknown"
 	defaultVersion    = "unknown"
@@ -32,7 +32,7 @@ func LoadConfig() (*Config, error) {
 	viper.SetDefault("version", defaultVersion)
 	viper.SetDefault("useragent", defaultUserAgent)
 
-	viper.BindEnv("port", "PORT")
+	viper.BindEnv("port", "APP_PORT")
 	viper.BindEnv("version", "VERSION")
 
 	viper.SetConfigName(defaultConfigName)
