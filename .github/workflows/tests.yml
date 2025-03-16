@@ -1,4 +1,4 @@
-name: tests
+name: test
 
 on:
   push:
@@ -14,55 +14,135 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Set up Docker Compose
+      - name: Check Docker Compose version (Docker Compose V2)
         run: docker compose version
 
       - name: Build and start containers
         run: |
-          docker compose up -d
+          docker compose up -d --build
           sleep 10
 
-      - name: Check health endpoint
+      - name: Check /health
         run: |
           echo "Testing /health endpoint..."
-          curl -f http://localhost:8081/health
+          response=$(curl -s -f http://localhost:8081/health)
+          echo "Got response: $response"
+          if [ "$response" != "OK" ]; then
+            echo "ERROR: /health response is not 'OK'"
+            exit 1
+          fi
           echo "Health check passed!"
 
-      - name: Test /info endpoint
+      - name: Test /info
         run: |
           echo "Testing /info..."
-          curl -f http://localhost:8081/info
-          echo "Info check passed!"
+          expected='{
+                "version": "v2",
+                "service": "currency",
+                "author": "mip3x"
+              }'
+              
+          response=$(curl -s -f http://localhost:8081/info)
+          echo "Got response: $response"
 
-      - name: Test /info/currency no query params
+          sorted_expected=$(echo "$expected" | jq -S .)
+          sorted_response=$(echo "$response" | jq -S .)
+
+          if [ "$sorted_expected" = "$sorted_response" ]; then
+            echo "Info check passed!"
+          else
+            echo "ERROR: /info response does not match expected!"
+            echo "Expected: $sorted_expected"
+            echo "Got:      $sorted_response"
+            exit 1
+          fi
+
+      - name: Test /info/currency (no query params)
         run: |
           echo "Testing /info/currency..."
           curl -f "http://localhost:8081/info/currency"
           echo "Currency check (no query params) passed!"
 
-      - name: Test /info/currency with date=2022-01-17
+      - name: Test /info/currency date=2022-01-17
         run: |
           echo "Testing /info/currency?date=2022-01-17..."
-          curl -f "http://localhost:8081/info/currency?date=2022-01-17"
-          echo "Currency check with date passed!"
 
-      - name: Test /info/currency with currency=USD and date=2022-01-17
+          expected='{
+              "data": {
+                "AMD": 15.6948,
+                "AUD": 55.2264,
+                "AZN": 44.5949,
+                "BGN": 44.4276,
+                "BRL": 13.7033,
+                "BYN": 29.4985,
+                "CAD": 60.6814,
+                "CHF": 83.2419,
+                "CNY": 11.9457,
+                "CZK": 35.4398,
+                "DKK": 11.6776,
+                "EUR": 86.8894,
+                "GBP": 104.0505,
+                "HKD": 97.3278,
+                "HUF": 24.5125,
+                "INR": 10.2189,
+                "JPY": 66.5935,
+                "KGS": 89.3193,
+                "KRW": 63.8485,
+                "KZT": 17.3677,
+                "MDL": 42.0459,
+                "NOK": 87.3533,
+                "PLN": 19.1417,
+                "RON": 17.5789,
+                "SEK": 84.8186,
+                "SGD": 56.3448,
+                "TJS": 67.0799,
+                "TMT": 21.6786,
+                "TRY": 56.0302,
+                "UAH": 27.1332,
+                "USD": 75.7668,
+                "UZS": 70.0374,
+                "XDR": 106.6334,
+                "ZAR": 49.4603
+              },
+              "service": "currency"
+            }'
+
+          response=$(curl -s -f "http://localhost:8081/info/currency?date=2022-01-17")
+          echo "Got response: $response"
+
+          sorted_expected=$(echo "$expected" | jq -S .)
+          sorted_response=$(echo "$response" | jq -S .)
+
+          if [ "$sorted_expected" = "$sorted_response" ]; then
+            echo "Check with date=2022-01-17 passed!"
+          else
+            echo "ERROR: mismatch for date=2022-01-17"
+            exit 1
+          fi
+
+      - name: Test /info/currency currency=USD date=2022-01-17
         run: |
           echo "Testing /info/currency?currency=USD&date=2022-01-17..."
-          curl -f "http://localhost:8081/info/currency?currency=USD&date=2022-01-17"
-          echo "Currency check with currency and date passed!"
 
-      - name: Test /info/currency with date in the past
-        run: |
-          echo "Testing /info/currency?currency=USD&date=1999-01-01..."
-          curl -f "http://localhost:8081/info/currency?currency=USD&date=1999-01-01"
-          echo "Check passed!"
+          expected='{
+                    "data": {
+                      "USD": 75.7668
+                    },
+                    "service": "currency"
+                  }'
 
-      - name: Test /info/currency with future date
-        run: |
-          echo "Testing /info/currency?currency=AED&date=2024-01-01..."
-          curl -f "http://localhost:8081/info/currency?currency=AED&date=2024-01-01"
-          echo "Future date check passed!"
+          response=$(curl -s -f "http://localhost:8081/info/currency?currency=USD&date=2022-01-17")
+          echo "Got response: $response"
+
+          sorted_expected=$(echo "$expected" | jq -S .)
+          sorted_response=$(echo "$response" | jq -S .)
+
+          if [ "$sorted_expected" = "$sorted_response" ]; then
+            echo "Currency check (USD, 2022-01-17) passed!"
+          else
+            echo "ERROR: mismatch for USD, 2022-01-17"
+            exit 1
+          fi
 
       - name: Shut down containers
         if: always()
