@@ -59,6 +59,8 @@ You should see `OK` if everything is working properly
 
 ## Running with Docker
 
+![Architecture diagram](./docs/scheme/scheme.png)
+
 1. Run via `docker compose`:
    ```bash
    docker compose up -d

@@ -1,0 +1,42 @@
+@startuml
+
+' --- General Settings ---
+skinparam defaultTextAlignment center
+skinparam componentStyle uml2
+skinparam linetype ortho
+skinparam dpi 200
+skinparam RoundCorner 15
+skinparam shadowing true
+skinparam monochrome true
+
+' --- Icons ---
+!include <tupadr3/common>
+!include <tupadr3/devicons/nginx>
+!include <tupadr3/devicons2/docker>
+!include <tupadr3/devicons/go>
+
+actor User as U
+
+frame "currency-api" as API {
+
+  DEV2_DOCKER(docker,appnet,cloud) {
+
+    frame "Nginx (web)" as WebC {
+      rectangle "<$nginx>\nnginx:alpine\n" as nginxC
+    }
+
+    frame "Go App (app)" as AppC {
+      rectangle "<$go>\nyacr/currency_app\n" as goC
+    }
+
+  }
+}
+
+' --- Connections ---
+U --> WebC
+WebC --> AppC
+AppC --> WebC
+WebC --> U
+
+@enduml
+
