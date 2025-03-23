@@ -1,31 +1,33 @@
 establish-connection
 ====================
 
-Эта роль добавляет сгенерированный публичный ключ в `authorized_keys` на нодах `workers` для дальнейшего подключения по `ssh`.
+This role adds the generated public key to the `authorized_keys` on `workers` nodes for subsequent SSH connections
 
-Требования
-----------
+Requirements
+------------
 
-- Необходимо запускать плэйбук с ключом `--ask-pass` (`-k`), так как `ssh`-ключ пока не добавлен в `authorized_keys`
+- The playbook must be run with the `--ask-pass` (`-k`) flag since the SSH key is not yet added to `authorized_keys`
 
-Переменные
-----------
+Variables
+---------
 
-- `ssh_public_key_path` - путь до публичного ключа `ssh`
+- `ssh_public_key_path` - the path to the SSH public key
 
-Зависимости
------------
+Dependencies
+------------
 
-- Необходимо установить пакет `sshpass` на хост, с которого происходит запуск (`apt install sshpass` для `Ubuntu 22.04`)
+- The package `sshpass` must be installed on the host from which the playbook is run (e.g., `apt install sshpass` for Ubuntu 22.04)
 
-Пример `playbook`-а
--------------------
+Example Playbook
+----------------
 
-    - hosts: workers
-      roles:
-         - { role: username.establish-connection }
+```yaml
+- hosts: workers
+  roles:
+    - { role: username.establish-connection }
+```
 
-Лицензия
---------
+License
+-------
 
 MIT
