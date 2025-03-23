@@ -1,0 +1,19 @@
+all:
+  children:
+    local:
+      hosts:
+        local:
+          ansible_connection: local
+    master:
+      hosts:
+        master-node:
+          ansible_host: # insert IP
+          ansible_port: # insert PORT
+    workers:
+      hosts:
+        worker-node1:
+          ansible_host: # insert IP
+          ansible_port: # insert PORT
+        worker-node2:
+          ansible_host: # insert IP
+          ansible_port: # insert PORT

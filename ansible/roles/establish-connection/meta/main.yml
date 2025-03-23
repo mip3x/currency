@@ -1,0 +1,11 @@
+galaxy_info:
+  author: mip3x
+  description: add ssh keys to authorized keys
+
+  license: MIT
+
+  min_ansible_version: 2.1
+
+  galaxy_tags: []
+
+dependencies: []

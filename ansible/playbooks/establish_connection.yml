@@ -1,0 +1,7 @@
+---
+- name: Clone SSH key
+  hosts: workers
+  become: true
+
+  roles:
+    - { role: establish-connection }
