@@ -1,40 +1,40 @@
 # Ansible
 `Ansible` block documentation
 
-## Содержание
-1. [Общие настройки](#общие-настройки)
-2. [Плейбуки](#плейбуки)
-    - [Плейбук `main`](#плейбук-main)
-    - [Плейбук `install-package`](#плейбук-install-package)
-    - [Плейбук `establish-connection`](#плейбук-establish-connection)
-3. [Роли](#роли)
-    - [Роль `establish-connection`](#роль-establish-connection)
+## Contents
+1. [General settings](#general-settings)
+2. [Playbooks](#playbooks)
+    - [Playbook `main`](#playbook-main)
+    - [Playbook `install-package`](#playbook-install-package)
+    - [Playbook `establish-connection`](#playbook-establish-connection)
+3. [Roles](#roles)
+    - [Role `establish-connection`](#role-establish-connection)
 
 ---
 
-## Общие настройки
-![`inventory.yml`](./inventory.yml) содержит адреса хостов и порты, по которым происходит подключение к этим хостам. `master` описывает главную ноду, `workers` - все остальные ноды:
+## General settings
+![`inventory.yml`](./inventory.yml) contains the host addresses and the ports used for connecting to these hosts. The `master` group defines the primary node, while `workers` includes all the other nodes:
 ```yaml
 all:
   children:
     master:
       hosts:
         master-node:
-	  # описание мастер-ноды
+      # description of the master node
     workers:
       hosts:
         worker-node1:
-	  # описание worker-ноды (1)
+	  # description of worker-node (1)
         worker-node2:
-	  # описание worker-ноды (2)
+	  # description of worker-node (2)
 ```
 
-Далее была сгенерирована пара `ssh`-ключей:
+A pair of SSH keys was generated:
 ```bash
 ssh-keygen -t ed25519
 ```
 
-Был написан конфиг ![`ansible.cfg`](./ansible.cfg):
+A configuration file ![`ansible.cfg`](./ansible.cfg) was written:
 ```toml
 [defaults]
 inventory               = inventory.yml
@@ -46,32 +46,33 @@ private_key_file        = ~/.ssh/ansible_ssh_key
 host_key_checking       = False
 ```
 
-- `inventory` - путь до файла `inventory`
-- `roles_path` - путь до директории, в которой находятся файлы ролей `ansible`
-- `remote_user` - пользователь, через которого будет производиться подключение по `ssh`
-- `private_key_file` - путь до приватного ключа `ssh`
-- `host_key_checking` - параметр, определяющий, будет ли производиться проверка хоста, к которому происходит подключение по `ssh`. Выставлен в `False`, чтобы избежать появления запроса на добавление хоста в `known_hosts`
+- `inventory` - path to the `inventory` file
+- `roles_path` - path to the directory containing the Ansible role files
+- `remote_user` - the user used to establish SSH connections
+- `private_key_file` - path to the SSH private key
+- `host_key_checking` - parameter that determines whether the SSH connection verifies the host key. Set to `False` to avoid prompts for adding new hosts to `known_hosts`
 
 ---
 
-# Плейбуки
+# Playbooks
 
-## Плейбук `main`
-Импортирует вспомогательные плейбуки и передаёт параметры, если требуется
+## Playbook `main`
+Imports auxiliary playbooks and passes parameters when needed.
 
----
-
-## Плейбук `install-package`
-Устанавливает заданный пакет (параметр `package_name`) на заданный хост (параметр `target_host`). Требуется указание ключа `--ask-become-pass` (`-K`), так как установка пакета требует прав администратора
 
 ---
 
-## Плейбук `establish-connection`
-Запуск роли `establish-connection`
+## Playbook `install-package`
+Installs the specified package (parameter `package_name`) on the designated host (parameter `target_host`). The `--ask-become-pass` (`-K`) flag is required because installing a package requires administrative privileges
 
 ---
 
-# Роли
+## Playbook `establish-connection`
+Executes the `establish-connection` role
 
-## Роль `establish-connection`
-Эта роль добавляет `ssh`-ключ в `authorized_keys` всех хостов типа `workers`: это необходимо для осуществления авторизации по `ssh`-ключу. (Аналог `ssh-copy-id`) Если плейбук, использующий эту роль запускается *впервые*, то должен быть использован флаг `--ask-pass` (`-k`), так как из-за отсутствия `ssh`-ключей авторизация по паролю является единственный доступной возможностью авторизоваться. Более подробная документация по роли: ![ссылка](./roles/establish-connection/README.md)
+---
+
+# Roles
+
+## Role `establish-connection`
+This role adds an SSH key to the `authorized_keys` file on all hosts in the workers group. This is necessary for SSH key authentication (similar to `ssh-copy-id`). If the playbook that uses this role is run for the first time, the `--ask-pass` (`-k`) flag should be used, because in the absence of SSH keys, password authentication is the only available method. For more detailed documentation on this role, see: ![link](./roles/establish-connection/README.md)
