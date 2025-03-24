@@ -26,7 +26,7 @@ Example of `playbook`
     - { role: username.k8s-requirements }
 ```
 
-Лицензия
---------
+License
+-------
 
 MIT
