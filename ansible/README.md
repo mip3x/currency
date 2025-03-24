@@ -148,7 +148,7 @@ This role prepares environment for `cri-o` and `k8s` utils installation. It inst
 ```
 
 ## Role `crio-installation`
-this role installs `cri-o`. for more detailed documentation on this role, see: ![link](./roles/crio-installation/readme.md). the main task from `tasks`:
+this role installs `cri-o`. for more detailed documentation on this role, see: ![link](./roles/crio-installation/README.md). the main task from `tasks`:
 ```yaml
 ---
 - name: Add cri-o APT repository
@@ -172,7 +172,7 @@ this role installs `cri-o`. for more detailed documentation on this role, see: !
 ```
 
 ## Role `k8s-utils-installation`
-this role installs `k8s` utils. for more detailed documentation on this role, see: ![link](./roles/k8s-utils-installation/readme.md). the main task from `tasks`:
+this role installs `k8s` utils. for more detailed documentation on this role, see: ![link](./roles/k8s-utils-installation/README.md). the main task from `tasks`:
 ```yaml
 ---
 - name: Install k8s utils
