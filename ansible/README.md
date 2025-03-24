@@ -82,4 +82,53 @@ Executes the `k8s-requirements` role
 # Roles
 
 ## Role `establish-connection`
-This role adds an SSH key to the `authorized_keys` file on all hosts in the workers group. This is necessary for SSH key authentication (similar to `ssh-copy-id`). If the playbook that uses this role is run for the first time, the `--ask-pass` (`-k`) flag should be used, because in the absence of SSH keys, password authentication is the only available method. For more detailed documentation on this role, see: ![link](./roles/establish-connection/README.md)
+This role adds an SSH key to the `authorized_keys` file on all hosts in the workers group. This is necessary for SSH key authentication (similar to `ssh-copy-id`). If the playbook that uses this role is run for the first time, the `--ask-pass` (`-k`) flag should be used, because in the absence of SSH keys, password authentication is the only available method. For more detailed documentation on this role, see: ![link](./roles/establish-connection/README.md). The main task from `tasks`:
+```yaml
+---
+- name: Copy SSH key
+  ansible.posix.authorized_key:
+    user: "{{ ansible_user }}"
+    state: present
+    key: "{{ lookup('file', ssh_public_key_path) }}"
+
+```
+
+## Role `k8s-requirements`
+This role prepares environment for `cri-o` and `k8s` utils installation. It installs requirements (packages) and adds `apt` repository of `k8s`. For more detailed documentation on this role, see: ![link](./roles/establish-connection/README.md). The main task from `tasks`:
+```yaml
+---
+- name: Install required packages
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gpg
+      - software-properties-common
+    state: present
+
+- name: Add Kubernetes APT repository
+  block:
+    - name: Ensure APT keyrings directory exists
+      ansible.builtin.file:
+        path: "{{ keyrings_directory_path }}"
+        state: directory
+        mode: 0755
+        
+    - name: Download the public signing key for the Kubernetes package repositories
+      ansible.builtin.apt_key:
+        url: "{{ k8s_public_signing_key }}"
+        keyring: "{{ k8s_dest_signing_key_path }}"
+
+    - name: Debug k8s_repo_src_string
+      ansible.builtin.debug:
+        msg: "{{ k8s_repo_src_string }}"
+
+    - name: Add Kubernetes APT repository
+      ansible.builtin.apt_repository:
+        repo: "{{ k8s_repo_src_string }}"
+        filename: kubernetes
+        state: present
+        update_cache: true
+  when: ansible_os_family == "Debian"
+```
