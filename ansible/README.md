@@ -5,12 +5,14 @@
 1. [General settings](#general-settings)
 2. [Playbooks](#playbooks)
     - [Playbook `main`](#playbook-main)
-    - [Playbook `install-package`](#playbook-install-package)
-    - [Playbook `establish-connection`](#playbook-establish-connection)
-    - [Playbook `k8s-requirements`](#playbook-k8s-requirements)
+    - [Playbook `install_package`](#playbook_install_package)
+    - [Playbook `establish_connection`](#playbook_establish_connection)
+    - [Playbook `k8s_requirements`](#playbook_k8s_requirements)
+    - [Playbook `install_crio`](#playbook_install_crio)
 3. [Roles](#roles)
     - [Role `establish-connection`](#role-establish-connection)
     - [Role `k8s-requirements`](#role-k8s-requirements)
+    - [Role `crio-installation`](#role-crio-installation)
 
 ---
 
@@ -64,18 +66,23 @@ Imports auxiliary playbooks and passes parameters when needed.
 
 ---
 
-## Playbook `install-package`
+## Playbook `install_package`
 Installs the specified package (parameter `package_name`) on the designated host (parameter `target_host`). The `--ask-become-pass` (`-K`) flag is required because installing a package requires administrative privileges
 
 ---
 
-## Playbook `establish-connection`
+## Playbook `establish_connection`
 Executes the `establish-connection` role
 
 ---
 
-## Playbook `k8s-requirements`
+## Playbook `k8s_requirements`
 Executes the `k8s-requirements` role
+
+---
+
+## Playbook `install_crio`
+Executes the `crio-installation` role
 
 ---
 
@@ -94,7 +101,7 @@ This role adds an SSH key to the `authorized_keys` file on all hosts in the work
 ```
 
 ## Role `k8s-requirements`
-This role prepares environment for `cri-o` and `k8s` utils installation. It installs requirements (packages) and adds `apt` repository of `k8s`. For more detailed documentation on this role, see: ![link](./roles/establish-connection/README.md). The main task from `tasks`:
+This role prepares environment for `cri-o` and `k8s` utils installation. It installs requirements (packages) and adds `apt` repository of `k8s`. For more detailed documentation on this role, see: ![link](./roles/k8s-requirements/README.md). The main task from `tasks`:
 ```yaml
 ---
 - name: Install required packages
@@ -128,6 +135,30 @@ This role prepares environment for `cri-o` and `k8s` utils installation. It inst
       ansible.builtin.apt_repository:
         repo: "{{ k8s_repo_src_string }}"
         filename: kubernetes
+        state: present
+        update_cache: true
+  when: ansible_os_family == "Debian"
+```
+
+## Role `crio-installation`
+This role installs `cri-o`. For more detailed documentation on this role, see: ![link](./roles/crio-installation/README.md). The main task from `tasks`:
+```yaml
+---
+- name: Add cri-o APT repository
+  block:
+    - name: Download the public signing key for the cri-o package repositories
+      ansible.builtin.apt_key:
+        url: "{{ crio_public_signing_key }}"
+        keyring: "{{ crio_dest_signing_key_path }}"
+
+    - name: Debug crio_repo_src_string
+      ansible.builtin.debug:
+        msg: "{{ crio_repo_src_string }}"
+
+    - name: Add cri-o APT repository
+      ansible.builtin.apt_repository:
+        repo: "{{ crio_repo_src_string }}"
+        filename: "{{ crio_filename }}"
         state: present
         update_cache: true
   when: ansible_os_family == "Debian"

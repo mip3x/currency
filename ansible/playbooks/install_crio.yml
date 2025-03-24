@@ -1,0 +1,7 @@
+---
+- name: Install cri-o
+  hosts: k8s
+  become: true
+
+  roles:
+    - { role: crio-installation }

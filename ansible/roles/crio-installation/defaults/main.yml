@@ -1,0 +1,5 @@
+---
+crio_version: "1.32"
+crio_public_signing_key: "https://download.opensuse.org/repositories/isv:/cri-o:/stable:/v{{ crio_version }}/deb/Release.key"
+crio_repo_src_string: "deb [signed-by={{ crio_dest_signing_key_path }}] https://download.opensuse.org/repositories/isv:/cri-o:/stable:/v{{ crio_version }}/deb/ /"
+crio_filename: "cri-o"
