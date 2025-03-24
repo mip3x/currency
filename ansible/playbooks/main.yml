@@ -9,3 +9,5 @@
 - import_playbook: k8s_requirements.yml
 
 - import_playbook: install_crio.yml
+
+- import_playbook: install_k8s_utils.yml

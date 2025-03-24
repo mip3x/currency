@@ -9,10 +9,12 @@
     - [Playbook `establish_connection`](#playbook-establish_connection)
     - [Playbook `k8s_requirements`](#playbook-k8s_requirements)
     - [Playbook `install_crio`](#playbook-install_crio)
+    - [Playbook `install_k8s_utils`](#playbook-install_k8s_utils)
 3. [Roles](#roles)
     - [Role `establish-connection`](#role-establish-connection)
     - [Role `k8s-requirements`](#role-k8s-requirements)
     - [Role `crio-installation`](#role-crio-installation)
+    - [Role `k8s-utils-installation`](#role-k8s-utils-installation)
 
 ---
 
@@ -86,6 +88,11 @@ Executes the `crio-installation` role
 
 ---
 
+## Playbook `install_k8s_utils`
+Executes the `k8s-utils-installation` role
+
+---
+
 # Roles
 
 ## Role `establish-connection`
@@ -141,7 +148,7 @@ This role prepares environment for `cri-o` and `k8s` utils installation. It inst
 ```
 
 ## Role `crio-installation`
-This role installs `cri-o`. For more detailed documentation on this role, see: ![link](./roles/crio-installation/README.md). The main task from `tasks`:
+this role installs `cri-o`. for more detailed documentation on this role, see: ![link](./roles/crio-installation/readme.md). the main task from `tasks`:
 ```yaml
 ---
 - name: Add cri-o APT repository
@@ -161,5 +168,37 @@ This role installs `cri-o`. For more detailed documentation on this role, see: !
         filename: "{{ crio_filename }}"
         state: present
         update_cache: true
+  when: ansible_os_family == "Debian"
+```
+
+## Role `k8s-utils-installation`
+this role installs `k8s` utils. for more detailed documentation on this role, see: ![link](./roles/k8s-utils-installation/readme.md). the main task from `tasks`:
+```yaml
+---
+- name: Install k8s utils
+  block:
+    - name: Install k8s utils - kubelet, kubeadm, kubectl
+      ansible.builtin.apt:
+        name: 
+          - kubelet
+          - kubeadm
+          - kubectl
+        state: present
+
+    - name: Prevent k8s utils from upgrading (hold)
+      ansible.builtin.dpkg_selections:
+        name: "{{ item }}"
+        selection: hold
+      loop:
+        - kubelet
+        - kubeadm
+        - kubectl
+
+    - name: Ensure kubelet service is enabled and started
+      ansible.builtin.service:
+        name: kubelet
+        state: started
+        enabled: true
+
   when: ansible_os_family == "Debian"
 ```
