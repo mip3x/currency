@@ -17,3 +17,7 @@ all:
         worker-node2:
           ansible_host: # insert IP
           ansible_port: # insert PORT
+    k8s:
+      children:
+        master:
+        workers:

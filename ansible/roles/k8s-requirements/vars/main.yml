@@ -1,0 +1,3 @@
+---
+keyrings_directory_path: "/etc/apt/keyrings"
+k8s_dest_signing_key_path: "/etc/apt/keyrings/kubernetes-apt-keyring.gpg"

@@ -1,0 +1,5 @@
+---
+k8s_version: "1.32"
+k8s_public_signing_key: "https://pkgs.k8s.io/core:/stable:/v{{ k8s_version }}/deb/Release.key"
+k8s_repo_src_string: "deb [signed-by={{ k8s_dest_signing_key_path }}] https://pkgs.k8s.io/core:/stable:/v{{ k8s_version }}/deb/ /"
+k8s_filename: "kubernetes"

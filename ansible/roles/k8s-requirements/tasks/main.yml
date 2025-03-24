@@ -1,0 +1,35 @@
+---
+- name: Install required packages
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gpg
+      - software-properties-common
+    state: present
+
+- name: Add Kubernetes APT repository
+  block:
+    - name: Ensure APT keyrings directory exists
+      ansible.builtin.file:
+        path: "{{ keyrings_directory_path }}"
+        state: directory
+        mode: 0755
+        
+    - name: Download the public signing key for the Kubernetes package repositories
+      ansible.builtin.apt_key:
+        url: "{{ k8s_public_signing_key }}"
+        keyring: "{{ k8s_dest_signing_key_path }}"
+
+    - name: Debug k8s_repo_src_string
+      ansible.builtin.debug:
+        msg: "{{ k8s_repo_src_string }}"
+
+    - name: Add Kubernetes APT repository
+      ansible.builtin.apt_repository:
+        repo: "{{ k8s_repo_src_string }}"
+        filename: "{{ k8s_filename }}"
+        state: present
+        update_cache: true
+  when: ansible_os_family == "Debian"

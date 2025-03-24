@@ -7,8 +7,10 @@
     - [Playbook `main`](#playbook-main)
     - [Playbook `install-package`](#playbook-install-package)
     - [Playbook `establish-connection`](#playbook-establish-connection)
+    - [Playbook `k8s-requirements`](#playbook-k8s-requirements)
 3. [Roles](#roles)
     - [Role `establish-connection`](#role-establish-connection)
+    - [Role `k8s-requirements`](#role-k8s-requirements)
 
 ---
 
@@ -69,6 +71,11 @@ Installs the specified package (parameter `package_name`) on the designated host
 
 ## Playbook `establish-connection`
 Executes the `establish-connection` role
+
+---
+
+## Playbook `k8s-requirements`
+Executes the `k8s-requirements` role
 
 ---
 

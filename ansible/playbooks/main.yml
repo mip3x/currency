@@ -5,3 +5,5 @@
     package_name: sshpass
 
 - import_playbook: establish_connection.yml
+
+- import_playbook: k8s_requirements.yml
