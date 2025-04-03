@@ -1,0 +1,17 @@
+---
+- name: Install package on host group "{{ target_host }}"
+  hosts: "{{ target_host }}"
+  become: true
+
+  tasks:
+    - name: Install package "{{ package_name }}" on Debian-based distros
+      apt:
+        name: "{{ package_name }}"
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install package "{{ package_name }}" on Arch-based distros
+      pacman:
+        name: "{{ package_name }}"
+        state: present
+      when: ansible_os_family == "Archlinux"

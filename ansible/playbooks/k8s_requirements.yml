@@ -1,0 +1,7 @@
+---
+- name: Install k8s requirements
+  hosts: k8s
+  become: true
+
+  roles:
+    - { role: k8s-requirements }

@@ -1,0 +1,27 @@
+---
+- name: Install k8s utils
+  block:
+    - name: Install k8s utils - kubelet, kubeadm, kubectl
+      ansible.builtin.apt:
+        name: 
+          - kubelet
+          - kubeadm
+          - kubectl
+        state: present
+
+    - name: Prevent k8s utils from upgrading (hold)
+      ansible.builtin.dpkg_selections:
+        name: "{{ item }}"
+        selection: hold
+      loop:
+        - kubelet
+        - kubeadm
+        - kubectl
+
+    - name: Ensure kubelet service is enabled and started
+      ansible.builtin.service:
+        name: kubelet
+        state: started
+        enabled: true
+
+  when: ansible_os_family == "Debian"

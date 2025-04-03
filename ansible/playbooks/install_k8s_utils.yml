@@ -1,0 +1,7 @@
+---
+- name: Install k8s utils
+  hosts: k8s
+  become: true
+
+  roles:
+    - { role: k8s-utils-installation }

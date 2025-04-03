@@ -1,0 +1,31 @@
+---
+- name: Add cri-o APT repository
+  block:
+    - name: Download the public signing key for the cri-o package repositories
+      ansible.builtin.apt_key:
+        url: "{{ crio_public_signing_key }}"
+        keyring: "{{ crio_dest_signing_key_path }}"
+
+    - name: Debug crio_repo_src_string
+      ansible.builtin.debug:
+        msg: "{{ crio_repo_src_string }}"
+
+    - name: Add cri-o APT repository
+      ansible.builtin.apt_repository:
+        repo: "{{ crio_repo_src_string }}"
+        filename: "{{ crio_filename }}"
+        state: present
+        update_cache: true
+
+    - name: Install cri-o package
+      ansible.builtin.apt:
+        name: cri-o
+        state: present
+
+    - name: Ensure cri-o service is enabled and started
+      ansible.builtin.service:
+        name: crio
+        state: started
+        enabled: true
+
+  when: ansible_os_family == "Debian"
